@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Download DeepLab semantic segmentation datasets and pretrained backbone models.')
 
-    downloads_dir_default = 'data/datasets/VOOCdevkit/'
+    downloads_dir_default = 'data/datasets/'
     data_dir_default = 'data/datasets/'
     pretrained_models_dir_default = 'data/models/pretrained/'
     pretrained_models_default = ['resnet_50']
@@ -170,7 +170,7 @@ if __name__ == '__main__':
     force = argv.force
 
     print('Downloading datasets...')
-    download_voc2012(downloads_dir=downloads_dir, data_dir=data_dir, force=force)
+    download_voc2012(downloads_dir=downloads_dir, data_dir='data/datasets/VOCdevkit/', force=force)
     download_sbd(downloads_dir=downloads_dir, data_dir=os.path.join(data_dir, 'SBD'), force=force)
     #download_cityscapes(downloads_dir=os.path.join(downloads_dir, 'cityscapes/'), data_dir=os.path.join(data_dir, 'cityscapes'), force=force)
     print('Downloading pre-trained models...')

@@ -1,3 +1,12 @@
+```
+%tensorflow_version 1.2
+!pip install tensorflow-gpu==1.13.1
+# restart kernal
+import tensorflow as tf
+tf.__version__
+!git clone https://github.com/lahiiru/DeepLab-V3.git
+```
+
 # DeepLab V3
 
 Lei Mao, Shengjie Lin
