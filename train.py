@@ -148,8 +148,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Train DeepLab V3 for image semantic segmantation.')
 
-    network_backbone_default = 'resnet_101'
-    pre_trained_model_default = 'data/models/pretrained/resnet_101/resnet_v2_101.ckpt'
+    network_backbone_default = 'resnet_50'
+    pre_trained_model_default = 'data/models/pretrained/resnet_50/resnet_v2_50.ckpt'
     trainset_filename_default = 'data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/train.txt'
     valset_filename_default = 'data/datasets/VOCdevkit/VOC2012/ImageSets/Segmentation/val.txt'
     images_dir_default = 'data/datasets/VOCdevkit/VOC2012/JPEGImages/'

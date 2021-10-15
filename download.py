@@ -92,9 +92,9 @@ def extract(archive_filepath, archive_type, destination_dir, force=False):
 
 
 def download_voc2012(downloads_dir='data/downloads/', data_dir='data/datasets/', force=False):
-    url = 'http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar'
+    url = 'https://data.deepai.org/PascalVOC2012.zip'
     filepath = download(url, downloads_dir, force=force)
-    extract(filepath, 'tar', data_dir, force=force)
+    extract(filepath, 'zip', data_dir, force=force)
 
 
 def download_sbd(downloads_dir='data/downloads/', data_dir='data/datasets/SBD/', force=False):
@@ -150,10 +150,10 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Download DeepLab semantic segmentation datasets and pretrained backbone models.')
 
-    downloads_dir_default = 'data/downloads/'
+    downloads_dir_default = 'data/datasets/VOOCdevkit/'
     data_dir_default = 'data/datasets/'
     pretrained_models_dir_default = 'data/models/pretrained/'
-    pretrained_models_default = ['resnet_50', 'resnet_101', 'mobilenet_1.0_224']
+    pretrained_models_default = ['resnet_50']
 
     parser.add_argument('--downloads_dir', type=str, help='Downloads directory', default=downloads_dir_default)
     parser.add_argument('--data_dir', type=str, help='Data directory', default=data_dir_default)
