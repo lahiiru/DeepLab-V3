@@ -152,7 +152,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
         print('Training loss: {:.4f} | mIoU: {:.4f}'.format(train_loss_ave, mIoU))
 
         with tf.name_scope('mIOU'):
-            val_loss_summary = tf.summary.scalar('valid', mIoU)
+            val_loss_summary = tf.summary.scalar('train', mIoU)
         with tf.Session().as_default():
             writer.add_summary(val_loss_summary.eval())
 
