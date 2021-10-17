@@ -38,8 +38,11 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
         os.makedirs(log_dir)
 
     now = datetime.now()
-    log_dir = os.path.join(log_dir, now.strftime('NEW-%Y%m%d-%H%M%S'))
-    writer = tf.summary.FileWriter(log_dir, tf.get_default_graph())
+    log_dir = os.path.join(log_dir, now.strftime('%Y%m%d-%H%M%S'))
+    if not os.path.exists(os.path.join(log_dir, 'train')):
+        os.makedirs(os.path.join(log_dir, 'train'))
+    if not os.path.exists(os.path.join(log_dir, 'val')):
+        os.makedirs(os.path.join(log_dir, 'val'))
 
     # Prepare datasets
     train_dataset = Dataset(dataset_filename=trainset_filename, images_dir=images_dir, labels_dir=labels_dir, image_extension='.jpg', label_extension='.png')
@@ -64,7 +67,21 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
 
     model = DeepLab(network_backbone, num_classes=num_classes, ignore_label=ignore_label, batch_norm_momentum=batch_norm_decay, pre_trained_model=pre_trained_model, log_dir=log_dir)
 
+    train_writer = tf.summary.FileWriter(os.path.join(log_dir, 'train'))
+    val_writer = tf.summary.FileWriter(os.path.join(log_dir, 'val'))
+
+    val_miou_ph = tf.placeholder(dtype=tf.float32, shape=(), name='valmiouph')
+    train_miou_ph = tf.placeholder(dtype=tf.float32, shape=(), name='trainmiouph')
+    val_loss_ph = tf.placeholder(dtype=tf.float32, shape=(), name='vallossph')
+    train_loss_ph = tf.placeholder(dtype=tf.float32, shape=(), name='trainlossph')
+
     best_mIoU = 0
+
+    val_miou_sum = tf.summary.scalar('Mean_IOU/val', val_miou_ph)
+    train_miou_sum = tf.summary.scalar('Mean_IOU/train', train_miou_ph)
+
+    val_loss_sum = tf.summary.scalar('Cross_Entropy/val', val_loss_ph)
+    train_loss_sum = tf.summary.scalar('Cross_Entropy/train', train_loss_ph)
 
     for i in range(num_epochs):
 
@@ -98,10 +115,8 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
 
         print('Validation loss: {:.4f} | mIoU: {:.4f}'.format(valid_loss_ave, mean_IOU))
 
-        with tf.name_scope('mIOU'):
-            val_loss_summary = tf.summary.scalar('valid', mean_IOU)
-        with tf.Session().as_default():
-            writer.add_summary(val_loss_summary.eval(), i)
+        val_writer.add_summary(model.sess.run(val_miou_sum, feed_dict={'valmiouph:0': mean_IOU}), i)
+        val_writer.add_summary(model.sess.run(val_loss_sum, feed_dict={'vallossph:0': valid_loss_ave}), i)
 
         if mean_IOU > best_mIoU:
             best_mIoU = mean_IOU
@@ -151,10 +166,8 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
         train_loss_ave = train_loss_total / (train_iterator.dataset_size + train_augmented_iterator.dataset_size)
         print('Training loss: {:.4f} | mIoU: {:.4f}'.format(train_loss_ave, mIoU))
 
-        with tf.name_scope('mIOU'):
-            val_loss_summary = tf.summary.scalar('train', mIoU)
-        with tf.Session().as_default():
-            writer.add_summary(val_loss_summary.eval(), i)
+        train_writer.add_summary(model.sess.run(train_miou_sum, feed_dict={'trainmiouph:0': mIoU}), i)
+        train_writer.add_summary(model.sess.run(train_loss_sum, feed_dict={'trainlossph:0': train_loss_ave}), i)
 
     model.close()
 

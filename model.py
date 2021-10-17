@@ -45,7 +45,7 @@ class DeepLab(object):
             self.train_step = 0
             now = datetime.now()
             self.log_dir = os.path.join(log_dir, now.strftime('%Y%m%d-%H%M%S'))
-            self.writer = tf.summary.FileWriter(self.log_dir, tf.get_default_graph())
+            # self.writer = tf.summary.FileWriter(self.log_dir, tf.get_default_graph())
             self.train_summaries, self.valid_summaries = self.summary()
 
     def backbone_initializer(self, base_architecture):
@@ -103,7 +103,7 @@ class DeepLab(object):
 
         _, outputs, train_loss, summaries = self.sess.run([self.optimizer, self.outputs, self.loss, self.train_summaries], feed_dict={self.inputs: inputs, self.labels: labels, self.learning_rate: learning_rate, self.target_height: target_height, self.target_width: target_width, self.weight_decay: weight_decay, self.is_training: True})
 
-        self.writer.add_summary(summaries, self.train_step)
+        # self.writer.add_summary(summaries, self.train_step)
         self.train_step += 1
 
         return outputs, train_loss
@@ -112,7 +112,7 @@ class DeepLab(object):
 
         outputs, valid_loss, summaries = self.sess.run([self.outputs, self.loss, self.valid_summaries], feed_dict={self.inputs: inputs, self.labels: labels, self.target_height: target_height, self.target_width: target_width, self.is_training: False})
 
-        self.writer.add_summary(summaries, self.train_step)
+        # self.writer.add_summary(summaries, self.train_step)
 
         return outputs, valid_loss
 
@@ -142,8 +142,8 @@ class DeepLab(object):
 
     def close(self):
 
-        if self.training:
-            self.writer.close()
+        # if self.training:
+            # self.writer.close()
         self.sess.close()
 
 
