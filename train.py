@@ -100,7 +100,8 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
 
         with tf.name_scope('mIOU'):
             val_loss_summary = tf.summary.scalar('valid', mean_IOU)
-            writer.add_summary(val_loss_summary)
+        with tf.Session().as_default():
+            writer.add_summary(val_loss_summary.eval())
 
         if mean_IOU > best_mIoU:
             best_mIoU = mean_IOU
@@ -151,8 +152,9 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
         print('Training loss: {:.4f} | mIoU: {:.4f}'.format(train_loss_ave, mIoU))
 
         with tf.name_scope('mIOU'):
-            val_loss_summary = tf.summary.scalar('train', mean_IOU)
-            writer.add_summary(val_loss_summary)
+            val_loss_summary = tf.summary.scalar('valid', mIoU)
+        with tf.Session().as_default():
+            writer.add_summary(val_loss_summary.eval())
 
     model.close()
 
