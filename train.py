@@ -1,6 +1,7 @@
 
 import argparse
 import os
+from datetime import datetime
 
 import numpy as np
 
@@ -35,6 +36,10 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
         os.makedirs(model_dir)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
+
+    now = datetime.now()
+    log_dir = os.path.join(log_dir, now.strftime('NEW-%Y%m%d-%H%M%S'))
+    writer = tf.summary.FileWriter(log_dir, tf.get_default_graph())
 
     # Prepare datasets
     train_dataset = Dataset(dataset_filename=trainset_filename, images_dir=images_dir, labels_dir=labels_dir, image_extension='.jpg', label_extension='.png')
@@ -93,6 +98,10 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
 
         print('Validation loss: {:.4f} | mIoU: {:.4f}'.format(valid_loss_ave, mean_IOU))
 
+        with tf.name_scope('mIOU'):
+            val_loss_summary = tf.summary.scalar('valid', mean_IOU)
+            writer.add_summary(val_loss_summary)
+
         if mean_IOU > best_mIoU:
             best_mIoU = mean_IOU
             model_savename = '{}_{:.4f}.ckpt'.format(network_backbone, best_mIoU)
@@ -140,6 +149,10 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
         mIoU = mean_intersection_over_union(num_pixels_union=num_pixels_union_total, num_pixels_intersection=num_pixels_intersection_total)
         train_loss_ave = train_loss_total / (train_iterator.dataset_size + train_augmented_iterator.dataset_size)
         print('Training loss: {:.4f} | mIoU: {:.4f}'.format(train_loss_ave, mIoU))
+
+        with tf.name_scope('mIOU'):
+            val_loss_summary = tf.summary.scalar('train', mean_IOU)
+            writer.add_summary(val_loss_summary)
 
     model.close()
 
