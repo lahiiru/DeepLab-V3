@@ -148,6 +148,20 @@ class Iterator(object):
 
         return image, label
 
+    def next_raw_data_with_name(self):
+
+        image_filename = self.image_filenames[self.current_index]
+        label_filename = self.label_filenames[self.current_index]
+        self.current_index += 1
+        if self.current_index >= self.dataset_size:
+            self.current_index = 0
+
+        image = read_image(image_filename=image_filename)
+        label = read_label(label_filename=label_filename)
+        label = np.expand_dims(label, axis=2)
+
+        return image_filename, image, label
+
     def next_minibatch(self):
 
         image_filenames_minibatch = self.image_filenames[self.current_index: self.current_index + self.minibatch_size]

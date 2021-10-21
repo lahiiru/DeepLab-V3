@@ -163,7 +163,7 @@ def train(network_backbone, pre_trained_model=None, trainset_filename='data/data
         train_augmented_iterator.shuffle_dataset()
 
         mIoU = mean_intersection_over_union(num_pixels_union=num_pixels_union_total, num_pixels_intersection=num_pixels_intersection_total)
-        train_loss_ave = train_loss_total / (train_iterator.dataset_size + train_augmented_iterator.dataset_size)
+        train_loss_ave = minibatch_size * train_loss_total / (train_iterator.dataset_size + train_augmented_iterator.dataset_size)
         print('Training loss: {:.4f} | mIoU: {:.4f}'.format(train_loss_ave, mIoU))
 
         train_writer.add_summary(model.sess.run(train_miou_sum, feed_dict={'trainmiouph:0': mIoU}), i)
